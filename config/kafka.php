@@ -26,7 +26,7 @@ return [
      | establishing that each partition is only consumed by a single consumer from the group.
      | This config defines the consumer group id you want to use for your project.
      */
-    'consumer_group_id' => env('KAFKA_CONSUMER_GROUP_ID', 'group'),
+    'consumer_group_id' => env('KAFKA_CONSUMER_GROUP_ID', 'kafka-orders-group'),
 
     'consumer_timeout_ms' => env('KAFKA_CONSUMER_DEFAULT_TIMEOUT', 2000),
 
@@ -43,9 +43,7 @@ return [
      | If you set enable.auto.commit (which is the default), then the consumer will automatically commit offsets periodically at the
      | interval set by auto.commit.interval.ms.
      */
-    'auto_commit' => env('KAFKA_AUTO_COMMIT', true),
 
-    'sleep_on_error' => env('KAFKA_ERROR_SLEEP', 5),
 
     'partition' => env('KAFKA_PARTITION', 0),
 
@@ -83,4 +81,15 @@ return [
      | Kafka message id key name
      */
     'message_id_key' => env('MESSAGE_ID_KEY', 'laravel-kafka::message-id'),
+
+    'topics' => [
+        'order_created' => 'order.created',
+        'order_cancelled' => 'order.cancelled',
+        'order_events' => 'order.events',
+        'dead_letter' => 'order.dlq',
+    ],
+
+    'max_retries' => env('KAFKA_MAX_RETRIES', 3),
+    'auto_commit' => env('KAFKA_AUTO_COMMIT', false),
+    'sleep_on_error' => 5,
 ];

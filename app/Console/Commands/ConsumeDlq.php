@@ -18,8 +18,8 @@ class ConsumeDlq extends Command
 
         $this->warn("[DLQ Monitor] Watching topic [{$topic}] for dead messages…");
 
-        Kafka::createConsumer([config('kafka.brokers')])
-            ->subscribe($topic)
+        Kafka::consumer()
+            ->subscribe([$topic])
             ->withConsumerGroupId(config('kafka.consumer_group_id') . '-dlq-monitor')
             ->withAutoCommit(true)
             ->withHandler(function (ConsumerMessage $message) use ($topic) {

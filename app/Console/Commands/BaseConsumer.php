@@ -26,10 +26,10 @@ abstract class BaseConsumer extends Command
     }
 
 
-    abstract protected function handle(array $payload): void;
+    abstract protected function processMessage(array $payload): void;
 
 
-    public function handle_command(): int
+    public function handle(): int
     {
         $topic = $this->topic();
         $maxRetries = (int) config('kafka.max_retries', 3);
@@ -37,8 +37,8 @@ abstract class BaseConsumer extends Command
 
         $this->info("[{$topic}] Consumer started. Waiting for messages…");
 
-        Kafka::createConsumer([config('kafka.brokers')])
-            ->subscribe($topic)
+        Kafka::consumer()
+            ->subscribe([$topic])
             ->withConsumerGroupId($this->groupId())
             ->withAutoCommit(config('kafka.auto_commit', false))
             ->withHandler(function (ConsumerMessage $message) use ($topic, $maxRetries, $producer) {
@@ -52,7 +52,7 @@ abstract class BaseConsumer extends Command
 
                 while ($attempt <= $maxRetries) {
                     try {
-                        $this->handle($payload);
+                        $this->processMessage($payload);
 
                         Log::info("[{$topic}] Message processed OK", [
                             'order_id' => $payload['order_id'],

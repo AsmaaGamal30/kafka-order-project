@@ -23,7 +23,7 @@ class ConsumeAnalytics extends BaseConsumer
         return config('kafka.consumer_group_id') . '-analytics';
     }
 
-    protected function handle(array $payload): void
+    protected function processMessage(array $payload): void
     {
         $eventType = $payload['event_type'];
         $orderId = $payload['order_id'];
